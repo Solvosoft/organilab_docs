@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """
-Copies images from docs/source/_static/ into docs/source/_extra/capacitacion/img/
-and rewrites every src attribute in capacitacion HTML files to use
-that local directory instead of the broken ../../_static/ paths.
+Copia las imágenes de source/_static/ a source/_extra/capacitacion/img/ y reescribe
+los atributos src de los HTML de capacitación para que apunten a ese directorio
+local en vez de a las rutas rotas ../../_static/.
+
+source/_extra/capacitacion/img/ NO se versiona: es salida de este script, que corre
+como paso previo al build (make images / make html, y build.jobs.pre_build en Read
+the Docs).
 """
 import os
 import re
@@ -13,7 +17,8 @@ DOCS_DIR = Path(__file__).parent
 SOURCE_STATIC = DOCS_DIR / "source" / "_static"
 CAP_DIR = DOCS_DIR / "source" / "_extra" / "capacitacion"
 IMG_DIR = CAP_DIR / "img"
-FAVICON_SRC = DOCS_DIR.parent / "src" / "presentation" / "static" / "favicon.png"
+# El favicon vive en este repo desde que docs se separó de la aplicación.
+FAVICON_SRC = SOURCE_STATIC / "favicon.png"
 
 # Matches src=".../_static/(gif/)?filename.ext"
 SRC_PATTERN = re.compile(
@@ -23,7 +28,7 @@ SRC_PATTERN = re.compile(
 
 
 def collect_images():
-    IMG_DIR.mkdir(exist_ok=True)
+    IMG_DIR.mkdir(parents=True, exist_ok=True)
     count = 0
     for f in SOURCE_STATIC.glob("*.png"):
         shutil.copy2(f, IMG_DIR / f.name)
@@ -67,5 +72,5 @@ if __name__ == "__main__":
         raise SystemExit(1)
     img_count = collect_images()
     html_count = fix_html_files()
-    print(f"  Copied {img_count} images → {IMG_DIR.relative_to(DOCS_DIR.parent)}")
-    print(f"  Updated {html_count} HTML files in {CAP_DIR.relative_to(DOCS_DIR.parent)}")
+    print(f"  Copied {img_count} images → {IMG_DIR.relative_to(DOCS_DIR)}")
+    print(f"  Updated {html_count} HTML files in {CAP_DIR.relative_to(DOCS_DIR)}")

@@ -3,7 +3,8 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
+PYTHON        = python3
+SPHINXBUILD   = $(PYTHON) -m sphinx
 PAPER         =
 BUILDDIR      = build
 
@@ -18,6 +19,7 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  html       to make standalone HTML files"
+	@echo "  images     to regenerate source/_extra/capacitacion/img/ from source/_static/"
 	@echo "  dirhtml    to make HTML files named index.html in directories"
 	@echo "  singlehtml to make a single large HTML file"
 	@echo "  pickle     to make pickle files"
@@ -48,8 +50,12 @@ help:
 clean:
 	rm -rf $(BUILDDIR)/*
 
+.PHONY: images
+images:
+	$(PYTHON) fix_capacitacion_images.py
+
 .PHONY: html
-html:
+html: images
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

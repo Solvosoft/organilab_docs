@@ -19,11 +19,38 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../src'))
+from pathlib import Path
 
-import django
-os.environ['DJANGO_SETTINGS_MODULE'] = 'organilab.settings'
-django.setup()
+# Este repositorio es independiente del de la aplicación. El código de Organilab
+# solo hace falta para autodoc (source/developers/*.rst); todo lo demás —incluida
+# la capacitación— se construye sin él. ORGANILAB_SRC apunta al `src/` de un
+# checkout de Solvosoft/organilab; por defecto se busca el repo hermano.
+DOCS_ROOT = Path(__file__).resolve().parents[1]
+if os.environ.get("ORGANILAB_SRC"):
+    _candidates = [Path(os.environ["ORGANILAB_SRC"])]
+else:
+    _candidates = [
+        DOCS_ROOT / "_organilab" / "src",     # checkout que hace Read the Docs
+        DOCS_ROOT.parent / "organilab" / "src",  # repo hermano en local
+    ]
+ORGANILAB_SRC = next(
+    (c.resolve() for c in _candidates if (c / "organilab" / "settings.py").is_file()),
+    _candidates[0].resolve(),
+)
+HAS_ORGANILAB_SRC = (ORGANILAB_SRC / "organilab" / "settings.py").is_file()
+
+if HAS_ORGANILAB_SRC:
+    sys.path.insert(0, str(ORGANILAB_SRC))
+    import django
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'organilab.settings')
+    django.setup()
+else:
+    print(
+        "AVISO: no se encontró el código de Organilab en %s; se omite "
+        "source/developers/ (documentación de API). Definí ORGANILAB_SRC para "
+        "incluirla." % ORGANILAB_SRC
+    )
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -94,6 +121,12 @@ language = 'en'
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['_extra']
+if not HAS_ORGANILAB_SRC:
+    # Sin el código de la aplicación, autodoc no puede importar nada. El índice
+    # sigue enlazando developers/index, así que se calla ese aviso concreto: la
+    # sección falta a propósito, no por un enlace roto.
+    exclude_patterns.append('developers')
+    suppress_warnings = ['toc.not_readable']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

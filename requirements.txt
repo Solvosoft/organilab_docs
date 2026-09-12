@@ -1,3 +1,6 @@
-sphinx<7
-sphinx-rtd-theme==1.2.2
-sphinxcontrib-video==0.2.0
+# Unificado con lo que se usa a diario en local; antes este fichero fijaba
+# sphinx<7 mientras el Makefile de organilab instalaba 8.2.3, asi que Read the
+# Docs y el build local no construian con el mismo stack.
+sphinx==8.2.3
+sphinx-rtd-theme==3.0.2
+sphinxcontrib-video==0.4.2
