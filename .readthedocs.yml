@@ -13,14 +13,7 @@ build:
       # source/developers/ usa autodoc contra el codigo de la aplicacion, que vive
       # en otro repositorio. Sin este checkout conf.py excluye esa seccion y el
       # resto de la documentacion se construye igual.
-      #
-      # TEMPORAL: se fija check-v3 en vez de la rama por defecto. master lista
-      # django_ajax en INSTALLED_APPS pero no declara djangoajax en su
-      # requirements.txt (lo arrastraba djgentelella < 0.6.0, y hoy se resuelve
-      # 0.6.1, que ya no lo trae), asi que Django no arranca y developers/ se
-      # omite. check-v3 ya lo corrige y es la rama que va hacia master: cuando
-      # se mezcle, quitar `--branch check-v3` y volver a la rama por defecto.
-      - git clone --depth 1 --branch check-v3 https://github.com/Solvosoft/organilab.git _organilab
+      - git clone --depth 1 https://github.com/Solvosoft/organilab.git _organilab
       - pip install -r _organilab/requirements.txt
       # source/_extra/capacitacion/img/ no se versiona: se genera aqui. Sin este
       # paso la capacitacion se publicaria sin imagenes.
