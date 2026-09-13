@@ -871,7 +871,7 @@ Permisos requeridos:
 
 Ejemplo de creación de característica de objeto:
 
-.. image:: ../_static/gif/view_object_features.gif
+.. image:: ../_static/gif/create_object_features.gif
    :height: 380
    :width: 720
 
@@ -895,7 +895,7 @@ Permisos requeridos:
 
 Ejemplo de actualización de caracaterística de objeto:
 
-.. image:: ../_static/gif/view_object_features.gif
+.. image:: ../_static/gif/update_object_features.gif
    :height: 380
    :width: 720
 
@@ -916,7 +916,7 @@ Permisos requeridos:
 
 Ejemplo de eliminación de caracaterística de objeto:
 
-.. image:: ../_static/gif/view_object_features.gif
+.. image:: ../_static/gif/delete_object_features.gif
    :height: 380
    :width: 720
 
