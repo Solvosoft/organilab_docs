@@ -37,19 +37,47 @@ ORGANILAB_SRC = next(
     (c.resolve() for c in _candidates if (c / "organilab" / "settings.py").is_file()),
     _candidates[0].resolve(),
 )
-HAS_ORGANILAB_SRC = (ORGANILAB_SRC / "organilab" / "settings.py").is_file()
+FOUND_ORGANILAB_SRC = (ORGANILAB_SRC / "organilab" / "settings.py").is_file()
 
-if HAS_ORGANILAB_SRC:
+
+def _setup_django():
+    """Arranca Django para que autodoc pueda importar el código.
+
+    Devuelve True si lo consiguió. No propaga el fallo a propósito: arrancar la
+    aplicación depende de que su rama tenga las dependencias declaradas, y un
+    fallo ahí no debe tumbar TODA la documentación —el manual y la capacitación
+    no necesitan el código—. Lo unico que se pierde es source/developers/.
+
+    Caso real: master listaba django_ajax en INSTALLED_APPS sin declarar
+    djangoajax en requirements.txt (lo arrastraba djgentelella < 0.6.0), y el
+    build entero de Read the Docs moria con ModuleNotFoundError.
+    """
+    if not FOUND_ORGANILAB_SRC:
+        print(
+            "AVISO: no se encontró el código de Organilab en %s; se omite "
+            "source/developers/ (documentación de API). Definí ORGANILAB_SRC "
+            "para incluirla." % ORGANILAB_SRC
+        )
+        return False
+
     sys.path.insert(0, str(ORGANILAB_SRC))
-    import django
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'organilab.settings')
-    django.setup()
-else:
-    print(
-        "AVISO: no se encontró el código de Organilab en %s; se omite "
-        "source/developers/ (documentación de API). Definí ORGANILAB_SRC para "
-        "incluirla." % ORGANILAB_SRC
-    )
+    try:
+        import django
+        django.setup()
+    except Exception as exc:
+        print(
+            "AVISO: el código está en %s pero Django no arrancó (%s: %s); se "
+            "omite source/developers/ (documentación de API). Suele ser una "
+            "dependencia de INSTALLED_APPS que falta en su requirements.txt."
+            % (ORGANILAB_SRC, type(exc).__name__, exc)
+        )
+        sys.path.remove(str(ORGANILAB_SRC))
+        return False
+    return True
+
+
+HAS_ORGANILAB_SRC = _setup_django()
 
 # -- General configuration ------------------------------------------------
 
