@@ -70,6 +70,14 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+_build/
+
+# Generado por fix_capacitacion_images.py a partir de source/_static/.
+# No se versiona: seria una copia byte a byte de _static (~89 MB duplicados).
+source/_extra/capacitacion/img/
+
+# Checkout auxiliar del codigo de la aplicacion (ver .readthedocs.yml)
+_organilab/
 
 # PyBuilder
 .pybuilder/
